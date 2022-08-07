@@ -1,6 +1,5 @@
-package cn.com.dbgo.core.db.support;
+package cn.com.dbgo.core.db;
 
-import cn.com.dbgo.core.db.DbExecutor;
 import cn.com.dbgo.core.utils.PropertiesUtil;
 
 import java.sql.*;

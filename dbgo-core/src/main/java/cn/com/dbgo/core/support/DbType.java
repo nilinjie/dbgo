@@ -1,4 +1,4 @@
-package cn.com.dbgo.core.db.support;
+package cn.com.dbgo.core.support;
 
 /**
  * 数据源类型

@@ -1,7 +1,6 @@
 package cn.com.dbgo.core.db;
 
 
-import cn.com.dbgo.core.db.support.DefaultDbExecutor;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
