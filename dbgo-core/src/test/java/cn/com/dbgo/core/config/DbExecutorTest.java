@@ -1,6 +1,7 @@
 package cn.com.dbgo.core.config;
 
 
+import cn.com.dbgo.core.entity.EntityTableInfo;
 import cn.com.dbgo.core.entity.User;
 import cn.com.dbgo.core.handler.TableHandler;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
@@ -49,7 +50,7 @@ class DbExecutorTest {
 
     @Test
     void testGetTableInfo() {
-        List<TableInfo> tableInfoList = tableHandler.getTableInfos();
-        System.out.println(tableInfoList.toArray());
+        List<EntityTableInfo> entityTableInfos = tableHandler.getTableInfos();
+        System.out.println(entityTableInfos.toArray());
     }
 }
