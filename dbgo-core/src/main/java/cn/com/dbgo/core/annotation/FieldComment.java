@@ -21,11 +21,12 @@ public @interface FieldComment {
     String value() default "";
 
     /**
-     * 字段数据大小上限
+     * 字段数据类型
+     * eg: varchar(100),decimal(8,2)
      *
      * @return
      */
-    int maxLength() default -1;
+    String columnType() default "";
 
     /**
      * 是否必填

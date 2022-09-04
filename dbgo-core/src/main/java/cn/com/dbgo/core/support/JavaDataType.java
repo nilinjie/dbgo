@@ -1,5 +1,11 @@
 package cn.com.dbgo.core.support;
 
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import sun.misc.FDBigInteger;
+
+import java.lang.reflect.Field;
+
 /**
  * java数据类型
  *
@@ -19,15 +25,15 @@ public enum JavaDataType {
     BASE_BOOLEAN("boolean", null),
 
     // 包装类型
-    BYTE("Byte", null),
-    SHORT("Short", null),
-    CHARACTER("Character", null),
-    INTEGER("Integer", null),
-    LONG("Long", null),
-    FLOAT("Float", null),
-    DOUBLE("Double", null),
-    BOOLEAN("Boolean", null),
-    STRING("String", null),
+    BYTE("Byte", "java.lang.Byte"),
+    SHORT("Short", "java.lang.Short"),
+    CHARACTER("Character", "java.lang.Character"),
+    INTEGER("Integer", "java.lang.Integer"),
+    LONG("Long", "java.lang.Long"),
+    FLOAT("Float", "java.lang.Float"),
+    DOUBLE("Double", "java.lang.Double"),
+    BOOLEAN("Boolean", "java.lang.Boolean"),
+    STRING("String", "java.lang.String"),
 
     // sql 包下数据类型
     DATE_SQL("Date", "java.sql.Date"),
@@ -59,6 +65,19 @@ public enum JavaDataType {
     JavaDataType(final String type, final String pkg) {
         this.type = type;
         this.pkg = pkg;
+    }
+
+    public static JavaDataType resolveJavaDataType(Field field) {
+        String dataType = field.getGenericType().toString();
+        for (JavaDataType value : JavaDataType.values()) {
+            if (value.getType().equals(dataType)) {
+                return value;
+            }
+            if (StringUtils.isNotBlank(value.getPkg()) && dataType.contains(value.getPkg())) {
+                return value;
+            }
+        }
+        return JavaDataType.STRING;
     }
 
     public String getType() {

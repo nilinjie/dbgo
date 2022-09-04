@@ -13,13 +13,14 @@ import java.util.List;
 public class EntityTableInfo {
 
     /**
+     * 表名
+     */
+    private String tableName;
+
+    /**
      * 表注释
      */
     private String comment;
-    /**
-     * 表信息
-     */
-    private TableInfo tableInfo;
     /**
      * 表字段列表
      */
@@ -29,7 +30,15 @@ public class EntityTableInfo {
     }
 
     public EntityTableInfo(TableInfo tableInfo) {
-        this.tableInfo = tableInfo;
+        this.tableName = tableInfo.getTableName();
+    }
+
+    public String getTableName() {
+        return tableName;
+    }
+
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
     }
 
     public String getComment() {
@@ -38,14 +47,6 @@ public class EntityTableInfo {
 
     public void setComment(String comment) {
         this.comment = comment;
-    }
-
-    public TableInfo getTableInfo() {
-        return tableInfo;
-    }
-
-    public void setTableInfo(TableInfo tableInfo) {
-        this.tableInfo = tableInfo;
     }
 
     public List<EntityFieldInfo> getFieldInfoList() {

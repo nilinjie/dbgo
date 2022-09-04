@@ -1,31 +1,28 @@
 package cn.com.dbgo.core.dialect.enums;
 
-import cn.com.dbgo.core.dialect.IDbColumnType;
-import cn.com.dbgo.core.support.JavaDataType;
-
 /**
  * mysql数据库字段类型
  *
  * @author lingee
  * @date 2022/9/4
  */
-public enum MysqlColumnType implements IDbColumnType {
+public enum MysqlColumnType {
 
-    VARCHAR("varchar"),
-    CHAR("char"),
+    VARCHAR("varchar(255)"),
+    CHAR("char(20)"),
     TEXT("text"),
     JSON("json"),
-    ENUM("enum"),
-    BIGINT("bigint"),
-    TINYINT("tinyint"),
-    BIT("bit"),
-    INT("int"),
-    DECIMAL("decimal"),
+    ENUM("enum(2)"),
+    BIGINT("bigint(14)"),
+    TINYINT("tinyint(1)"),
+    BIT("bit(1)"),
+    INT("int(11)"),
+    DECIMAL("decimal(6,2)"),
     CLOB("clob"),
     BLOB("blob"),
     BINARY("binary"),
-    FLOAT("float"),
-    DOUBLE("double"),
+    FLOAT("float(6,2)"),
+    DOUBLE("double(6,2)"),
     DATE("date"),
     TIME("time"),
     DATETIME("datetime"),
@@ -37,8 +34,8 @@ public enum MysqlColumnType implements IDbColumnType {
         this.type = type;
     }
 
-    @Override
     public String getType() {
         return type;
     }
+
 }

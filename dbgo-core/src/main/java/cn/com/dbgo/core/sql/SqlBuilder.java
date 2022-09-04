@@ -12,7 +12,6 @@ import com.alibaba.druid.sql.dialect.mysql.ast.expr.MySqlCharExpr;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlAlterTableChangeColumn;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlCreateTableStatement;
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 
 import java.util.List;
 
@@ -128,7 +127,7 @@ public class SqlBuilder implements Builder<String> {
 
         for (EntityFieldInfo entityFieldInfo : entityFields) {
             MySqlAlterTableChangeColumn alterTableChangeColumn = new MySqlAlterTableChangeColumn();
-            alterTableChangeColumn.setColumnName(new SQLIdentifierExpr(wrapper.wrap(entityFieldInfo.getTableFieldInfo().getColumn())));
+            alterTableChangeColumn.setColumnName(new SQLIdentifierExpr(wrapper.wrap(entityFieldInfo.getColumnName())));
             alterTableChangeColumn.setNewColumnDefinition(buildSQLColumnDefinition(entityFieldInfo));
 
             alterTableStatement.addItem(alterTableChangeColumn);
@@ -176,7 +175,7 @@ public class SqlBuilder implements Builder<String> {
 
         for (EntityFieldInfo entityFieldInfo : entityFields) {
             SQLAlterTableDropColumnItem dropColumnItem = new SQLAlterTableDropColumnItem();
-            dropColumnItem.addColumn((new SQLIdentifierExpr(wrapper.wrap(entityFieldInfo.getTableFieldInfo().getColumn()))));
+            dropColumnItem.addColumn((new SQLIdentifierExpr(wrapper.wrap(entityFieldInfo.getColumnName()))));
 
             alterTableStatement.addItem(dropColumnItem);
         }
@@ -218,22 +217,22 @@ public class SqlBuilder implements Builder<String> {
      * @return
      */
     private SQLColumnDefinition buildSQLColumnDefinition(EntityFieldInfo fieldInfo) {
-        TableFieldInfo tableFieldInfo = fieldInfo.getTableFieldInfo();
-
         SQLColumnDefinition sqlColumnDefinition = new SQLColumnDefinition();
 
-        sqlColumnDefinition.setName(wrapper.wrap(tableFieldInfo.getColumn()));
+        sqlColumnDefinition.setName(wrapper.wrap(fieldInfo.getColumnName()));
         sqlColumnDefinition.setComment(fieldInfo.getComment());
-        sqlColumnDefinition.setDataType(new SQLCharacterDataType(tableFieldInfo.getTypeHandler().getTypeName()));
-        sqlColumnDefinition.setAutoIncrement(IdType.AUTO.equals(fieldInfo.getIdType()));
+        sqlColumnDefinition.setDataType(new SQLCharacterDataType(fieldInfo.getColumnType()));
 
-        if (tableFieldInfo.isPrimitive()) {
+        if (fieldInfo.isPrimaryKey()) {
+            sqlColumnDefinition.setAutoIncrement(IdType.AUTO.equals(fieldInfo.getIdType()));
             sqlColumnDefinition.addConstraint(new SQLColumnPrimaryKey());
-        }
-        if (fieldInfo.isDefaultNotNull()) {
             sqlColumnDefinition.addConstraint(new SQLNotNullConstraint());
         } else {
-            sqlColumnDefinition.addConstraint(new SQLNullConstraint());
+            if (fieldInfo.isDefaultNotNull()) {
+                sqlColumnDefinition.addConstraint(new SQLNotNullConstraint());
+            } else {
+                sqlColumnDefinition.addConstraint(new SQLNullConstraint());
+            }
         }
         return sqlColumnDefinition;
     }

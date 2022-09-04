@@ -24,15 +24,23 @@ public class EntityFieldInfo {
      */
     private IdType idType;
     /**
-     * 字段信息
+     * 是否主键
      */
-    private TableFieldInfo tableFieldInfo;
+    private boolean primaryKey = false;
+    /**
+     * 字段名
+     */
+    private String columnName;
+    /**
+     * 表字段类型
+     */
+    private String columnType;
 
     public EntityFieldInfo() {
     }
 
     public EntityFieldInfo(TableFieldInfo tableFieldInfo) {
-        this.tableFieldInfo = tableFieldInfo;
+        this.columnName = tableFieldInfo.getColumn();
     }
 
     public String getComment() {
@@ -41,14 +49,6 @@ public class EntityFieldInfo {
 
     public void setComment(String comment) {
         this.comment = comment;
-    }
-
-    public TableFieldInfo getTableFieldInfo() {
-        return tableFieldInfo;
-    }
-
-    public void setTableFieldInfo(TableFieldInfo tableFieldInfo) {
-        this.tableFieldInfo = tableFieldInfo;
     }
 
     public boolean isDefaultNotNull() {
@@ -65,5 +65,29 @@ public class EntityFieldInfo {
 
     public void setIdType(IdType idType) {
         this.idType = idType;
+    }
+
+    public boolean isPrimaryKey() {
+        return primaryKey;
+    }
+
+    public void setPrimaryKey(boolean primaryKey) {
+        this.primaryKey = primaryKey;
+    }
+
+    public String getColumnName() {
+        return columnName;
+    }
+
+    public void setColumnName(String columnName) {
+        this.columnName = columnName;
+    }
+
+    public String getColumnType() {
+        return columnType;
+    }
+
+    public void setColumnType(String columnType) {
+        this.columnType = columnType;
     }
 }

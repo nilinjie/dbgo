@@ -2,6 +2,7 @@ package cn.com.dbgo.core.handler;
 
 import cn.com.dbgo.core.annotation.FieldComment;
 import cn.com.dbgo.core.annotation.TableComment;
+import cn.com.dbgo.core.dialect.ITypeConvert;
 import cn.com.dbgo.core.entity.EntityFieldInfo;
 import cn.com.dbgo.core.entity.EntityTableInfo;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
@@ -12,11 +13,13 @@ import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.override.MybatisMapperProxy;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
@@ -35,6 +38,9 @@ public class TableHandler {
 
     @Autowired
     private ApplicationContext applicationContext;
+
+    @Autowired
+    private ITypeConvert typeConvert;
 
     /**
      * 获取表映射实体信息
@@ -62,18 +68,46 @@ public class TableHandler {
                 if (ObjectUtils.isNotEmpty(comment)) {
                     entityTableInfo.setComment(comment.value());
                 }
+                /**
+                 * 设置主键
+                 */
+                List<EntityFieldInfo> entityFieldInfoList = new ArrayList<>();
+                EntityFieldInfo keyFieldInfo = new EntityFieldInfo();
+                keyFieldInfo.setPrimaryKey(true);
+                keyFieldInfo.setColumnName(tableInfo.getKeyColumn());
+                keyFieldInfo.setIdType(tableInfo.getIdType());
+                keyFieldInfo.setDefaultNotNull(true);
+                try {
+                    Field keyField = clazz.getDeclaredField(tableInfo.getKeyProperty());
+                    FieldComment fieldComment = keyField.getAnnotation(FieldComment.class);
+                    if (ObjectUtils.isNotEmpty(fieldComment)) {
+                        if (StringUtils.isNotBlank(fieldComment.columnType())) {
+                            keyFieldInfo.setColumnType(fieldComment.columnType());
+                        } else {
+                            keyFieldInfo.setColumnType(typeConvert.convertToDbColumnType(keyField));
+                        }
+                    }
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                }
+                entityFieldInfoList.add(keyFieldInfo);
 
                 List<TableFieldInfo> fieldInfoList = tableInfo.getFieldList();
                 if (CollectionUtils.isNotEmpty(fieldInfoList)) {
-                    List<EntityFieldInfo> entityFieldInfoList = new ArrayList<>();
                     fieldInfoList.stream().forEach(field -> {
                         EntityFieldInfo entityFieldInfo = new EntityFieldInfo(field);
                         FieldComment fieldComment = field.getField().getAnnotation(FieldComment.class);
                         if (ObjectUtils.isNotEmpty(fieldComment)) {
                             entityFieldInfo.setComment(fieldComment.value());
                             entityFieldInfo.setDefaultNotNull(fieldComment.required());
+                            if (StringUtils.isNotBlank(fieldComment.columnType())) {
+                                entityFieldInfo.setColumnType(fieldComment.columnType());
+                            }
                         }
                         entityFieldInfo.setIdType(tableInfo.getIdType());
+                        if (StringUtils.isBlank(entityFieldInfo.getColumnType())) {
+                            entityFieldInfo.setColumnType(typeConvert.convertToDbColumnType(field.getField()));
+                        }
                         entityFieldInfoList.add(entityFieldInfo);
                     });
                     entityTableInfo.setFieldInfoList(entityFieldInfoList);

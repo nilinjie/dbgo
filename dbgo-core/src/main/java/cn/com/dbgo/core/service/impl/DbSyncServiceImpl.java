@@ -47,7 +47,7 @@ public class DbSyncServiceImpl implements DbSyncService {
         //if (CollectionUtils.isEmpty(dbTables)) {
             entityTableInfos.stream().forEach(entityTableInfo -> {
                 String createTableSql = SqlBuilder.create()
-                        .createTable(entityTableInfo.getTableInfo().getTableName(), entityTableInfo.getComment(), entityTableInfo.getFieldInfoList())
+                        .createTable(entityTableInfo.getTableName(), entityTableInfo.getComment(), entityTableInfo.getFieldInfoList())
                         .build();
                 System.out.println(createTableSql);
             });
