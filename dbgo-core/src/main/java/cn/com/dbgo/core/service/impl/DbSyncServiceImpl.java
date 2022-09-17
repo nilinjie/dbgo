@@ -7,7 +7,6 @@ import cn.com.dbgo.core.handler.TableHandler;
 import cn.com.dbgo.core.service.DbSyncService;
 import cn.com.dbgo.core.service.TableService;
 import cn.com.dbgo.core.sql.SqlBuilder;
-import org.apache.ibatis.type.JdbcType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +32,6 @@ public class DbSyncServiceImpl implements DbSyncService {
     @Autowired
     private TableService tableService;
 
-
     @Override
     public void syncTables() {
         List<EntityTableInfo> entityTableInfos = tableHandler.getTableInfos();
@@ -44,17 +42,16 @@ public class DbSyncServiceImpl implements DbSyncService {
 
         List<IDbTable> dbTables = tableService.getDbTables();
 
-        //if (CollectionUtils.isEmpty(dbTables)) {
+        if (CollectionUtils.isEmpty(dbTables)) {
             entityTableInfos.stream().forEach(entityTableInfo -> {
                 String createTableSql = SqlBuilder.create()
                         .createTable(entityTableInfo.getTableName(), entityTableInfo.getComment(), entityTableInfo.getFieldInfoList())
                         .build();
-                System.out.println(createTableSql);
+                tableService.executeDDL(createTableSql);
             });
-        //}
+        }
 
-
-        List<IDbTableColumn> IDbTableColumns = tableService.getDbTableColumns(dbTables.get(3).getTableName());
+        List<IDbTableColumn> IDbTableColumns = tableService.getDbTableColumns(dbTables.get(0).getTableName());
 
     }
 }

@@ -33,4 +33,8 @@
         from information_schema.COLUMNS
         where TABLE_SCHEMA = (select database()) and TABLE_NAME=#{tableName}
     </select>
+
+    <update id="executeDDL">
+        ${sql}
+    </update>
 </mapper>

@@ -27,4 +27,11 @@ public interface TableService {
      * @return List<DbTableColumn>
      */
     List<IDbTableColumn> getDbTableColumns(String tableName);
+
+    /**
+     * 执行ddl语句
+     *
+     * @param sql sql语句
+     */
+    void executeDDL(String sql);
 }

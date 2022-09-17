@@ -58,4 +58,9 @@ public class TableServiceImpl implements TableService {
         }
         return null;
     }
+
+    @Override
+    public void executeDDL(String sql) {
+        tableMapper.executeDDL(sql);
+    }
 }
