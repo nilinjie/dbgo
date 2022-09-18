@@ -47,6 +47,10 @@ public class MySqlTableColumn implements IDbTableColumn, Serializable {
      */
     private String dataType;
     /**
+     * 是否为空
+     */
+    private String nullable;
+    /**
      * 扩展信息
      */
     private String extra;
@@ -92,6 +96,22 @@ public class MySqlTableColumn implements IDbTableColumn, Serializable {
         return columnType;
     }
 
+    @Override
+    public boolean isPrimaryKey() {
+        return null != this.columnKey && "PRI".equals(this.columnKey);
+    }
+
+    @Override
+    public boolean isDefaultNotNull() {
+        return null != this.nullable && "NO".equals(this.nullable);
+    }
+
+    @Override
+    public boolean isAutoIncrement() {
+        return null != this.extra && "auto_increment".equals(this.extra);
+    }
+
+
     public void setColumnType(String columnType) {
         this.columnType = columnType;
     }
@@ -104,7 +124,6 @@ public class MySqlTableColumn implements IDbTableColumn, Serializable {
         this.columnCharset = columnCharset;
     }
 
-    @Override
     public String getColumnKey() {
         return columnKey;
     }
@@ -119,6 +138,14 @@ public class MySqlTableColumn implements IDbTableColumn, Serializable {
 
     public void setDataType(String dataType) {
         this.dataType = dataType;
+    }
+
+    public String getNullable() {
+        return nullable;
+    }
+
+    public void setNullable(String nullable) {
+        this.nullable = nullable;
     }
 
     public String getExtra() {

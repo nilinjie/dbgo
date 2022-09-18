@@ -5,6 +5,7 @@ import cn.com.dbgo.core.dialect.IDbTableColumn;
 import cn.com.dbgo.core.mapper.TableMapper;
 import cn.com.dbgo.core.service.TableService;
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
@@ -61,6 +62,9 @@ public class TableServiceImpl implements TableService {
 
     @Override
     public void executeDDL(String sql) {
+        if (StringUtils.isBlank(sql)) {
+            return;
+        }
         tableMapper.executeDDL(sql);
     }
 }

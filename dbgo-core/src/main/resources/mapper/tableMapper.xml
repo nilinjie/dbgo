@@ -25,10 +25,10 @@
             COLUMN_KEY as columnKey,
             TABLE_SCHEMA as dbName,
             TABLE_NAME as tableName,
-            COLUMN_KEY as columnKey,
             COLUMN_COMMENT as columnComment,
             COLUMN_TYPE as columnType,
             DATA_TYPE as dataType,
+            IS_NULLABLE as nullable,
             EXTRA as extra
         from information_schema.COLUMNS
         where TABLE_SCHEMA = (select database()) and TABLE_NAME=#{tableName}

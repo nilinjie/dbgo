@@ -44,9 +44,23 @@ public interface IDbTableColumn {
     String getColumnType();
 
     /**
-     * 字段键类型
+     * 是否主键
      *
      * @return
      */
-    String getColumnKey();
+    boolean isPrimaryKey();
+
+    /**
+     * 是否默认不为空
+     *
+     * @return
+     */
+    boolean isDefaultNotNull();
+
+    /**
+     * 是否自增字段
+     *
+     * @return
+     */
+    boolean isAutoIncrement();
 }

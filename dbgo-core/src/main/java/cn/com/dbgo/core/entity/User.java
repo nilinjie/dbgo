@@ -23,13 +23,13 @@ public class User implements Serializable {
     @TableId(type = IdType.AUTO)
     private Long id;
 
-    @FieldComment(value = "姓名", required = true)
+    @FieldComment(value = "姓名")
     private String name;
 
     @FieldComment(value = "年龄")
     private Integer age;
 
-    @FieldComment(value = "邮箱", columnType = "varchar(100)")
+    @FieldComment(value = "邮箱", columnType = "varchar(200)")
     private String email;
 
     public Long getId() {

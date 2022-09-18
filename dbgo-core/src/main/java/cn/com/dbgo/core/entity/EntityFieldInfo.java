@@ -16,7 +16,7 @@ public class EntityFieldInfo {
      */
     private String comment;
     /**
-     * 默认为空
+     * 是否默认不为空
      */
     private boolean defaultNotNull;
     /**
@@ -26,7 +26,7 @@ public class EntityFieldInfo {
     /**
      * 是否主键
      */
-    private boolean primaryKey = false;
+    private boolean primaryKey;
     /**
      * 字段名
      */

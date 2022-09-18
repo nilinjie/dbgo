@@ -13,6 +13,7 @@ import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlAlterTableChangeCo
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlCreateTableStatement;
 import com.baomidou.mybatisplus.annotation.IdType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -114,6 +115,19 @@ public class SqlBuilder implements Builder<String> {
     }
 
     /**
+     * 单条修改表字段语句（仅mysql使用）
+     *
+     * @param tableName   表名
+     * @param entityField 实体字段
+     * @return SqlBuilder
+     */
+    public SqlBuilder changeColumn(String tableName, EntityFieldInfo entityField) {
+        List<EntityFieldInfo> entityFieldInfos = new ArrayList<>();
+        entityFieldInfos.add(entityField);
+        return changeColumns(tableName, entityFieldInfos);
+    }
+
+    /**
      * 构建修改表字段语句（仅mysql使用）
      *
      * @param tableName    表名
@@ -134,7 +148,21 @@ public class SqlBuilder implements Builder<String> {
         }
 
         sql.append(SQLUtils.toSQLString(alterTableStatement, dbType));
+        sql.append(";");
         return this;
+    }
+
+    /**
+     * 增加单个字段
+     *
+     * @param tableName   表名
+     * @param entityField 字段实体信息
+     * @return
+     */
+    public SqlBuilder addColumn(String tableName, EntityFieldInfo entityField) {
+        List<EntityFieldInfo> entityFieldInfos = new ArrayList<>();
+        entityFieldInfos.add(entityField);
+        return addColumns(tableName, entityFieldInfos);
     }
 
     /**
@@ -158,6 +186,7 @@ public class SqlBuilder implements Builder<String> {
         }
 
         sql.append(SQLUtils.toSQLString(alterTableStatement, dbType));
+        sql.append(";");
         return this;
     }
 
@@ -181,6 +210,7 @@ public class SqlBuilder implements Builder<String> {
         }
 
         sql.append(SQLUtils.toSQLString(alterTableStatement, dbType));
+        sql.append(";");
         return this;
 
     }
