@@ -114,6 +114,7 @@ public class DbSyncServiceImpl implements DbSyncService {
                 }
 
                 if (isChanged) {
+                    entityFieldInfo.setOriginDbTableColumn(dbTableColumn);
                     sqlBuilder.changeColumn(tableName, entityFieldInfo);
                 }
             }

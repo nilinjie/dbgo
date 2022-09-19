@@ -1,6 +1,7 @@
 package cn.com.dbgo.core.sql;
 
 
+import cn.com.dbgo.core.dialect.IDbTableColumn;
 import cn.com.dbgo.core.entity.EntityFieldInfo;
 import cn.com.dbgo.core.support.Builder;
 import com.alibaba.druid.DbType;
@@ -12,6 +13,7 @@ import com.alibaba.druid.sql.dialect.mysql.ast.expr.MySqlCharExpr;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlAlterTableChangeColumn;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlCreateTableStatement;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -137,11 +139,11 @@ public class SqlBuilder implements Builder<String> {
     public SqlBuilder changeColumns(String tableName,
                                     List<EntityFieldInfo> entityFields) {
         SQLAlterTableStatement alterTableStatement = new SQLAlterTableStatement();
-        alterTableStatement.setTableSource(new SQLExprTableSource(tableName));
+        alterTableStatement.setTableSource(new SQLExprTableSource(wrapper.wrap(tableName)));
 
         for (EntityFieldInfo entityFieldInfo : entityFields) {
             MySqlAlterTableChangeColumn alterTableChangeColumn = new MySqlAlterTableChangeColumn();
-            alterTableChangeColumn.setColumnName(new SQLIdentifierExpr(wrapper.wrap(entityFieldInfo.getColumnName())));
+            alterTableChangeColumn.setColumnName(new SQLIdentifierExpr(wrapper.wrap(entityFieldInfo.getOriginDbTableColumn().getColumnName())));
             alterTableChangeColumn.setNewColumnDefinition(buildSQLColumnDefinition(entityFieldInfo));
 
             alterTableStatement.addItem(alterTableChangeColumn);
@@ -253,16 +255,21 @@ public class SqlBuilder implements Builder<String> {
         sqlColumnDefinition.setComment(fieldInfo.getComment());
         sqlColumnDefinition.setDataType(new SQLCharacterDataType(fieldInfo.getColumnType()));
 
+        IDbTableColumn originDbTableColumn = fieldInfo.getOriginDbTableColumn();
+
         if (fieldInfo.isPrimaryKey()) {
             sqlColumnDefinition.setAutoIncrement(IdType.AUTO.equals(fieldInfo.getIdType()));
-            sqlColumnDefinition.addConstraint(new SQLColumnPrimaryKey());
+            if (ObjectUtils.isEmpty(originDbTableColumn) || !originDbTableColumn.isPrimaryKey()) {
+                sqlColumnDefinition.addConstraint(new SQLColumnPrimaryKey());
+                sqlColumnDefinition.addConstraint(new SQLNotNullConstraint());
+            }
+            return sqlColumnDefinition;
+        }
+
+        if (fieldInfo.isDefaultNotNull()) {
             sqlColumnDefinition.addConstraint(new SQLNotNullConstraint());
         } else {
-            if (fieldInfo.isDefaultNotNull()) {
-                sqlColumnDefinition.addConstraint(new SQLNotNullConstraint());
-            } else {
-                sqlColumnDefinition.addConstraint(new SQLNullConstraint());
-            }
+            sqlColumnDefinition.addConstraint(new SQLNullConstraint());
         }
         return sqlColumnDefinition;
     }

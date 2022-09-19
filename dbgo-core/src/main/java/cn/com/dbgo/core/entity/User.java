@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 
 import java.io.Serializable;
-import java.lang.reflect.Type;
 
 /**
  * 用户信息
@@ -23,7 +22,7 @@ public class User implements Serializable {
     @TableId(type = IdType.AUTO)
     private Long id;
 
-    @FieldComment(value = "姓名")
+    @FieldComment(value = "姓名", required = true)
     private String name;
 
     @FieldComment(value = "年龄")

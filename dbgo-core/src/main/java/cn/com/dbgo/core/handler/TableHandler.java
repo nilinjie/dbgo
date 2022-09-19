@@ -72,25 +72,28 @@ public class TableHandler {
                  * 设置主键
                  */
                 List<EntityFieldInfo> entityFieldInfoList = new ArrayList<>();
-                EntityFieldInfo keyFieldInfo = new EntityFieldInfo();
-                keyFieldInfo.setPrimaryKey(true);
-                keyFieldInfo.setColumnName(tableInfo.getKeyColumn());
-                keyFieldInfo.setIdType(tableInfo.getIdType());
-                keyFieldInfo.setDefaultNotNull(true);
-                try {
-                    Field keyField = clazz.getDeclaredField(tableInfo.getKeyProperty());
-                    FieldComment fieldComment = keyField.getAnnotation(FieldComment.class);
-                    if (ObjectUtils.isNotEmpty(fieldComment)) {
-                        if (StringUtils.isNotBlank(fieldComment.columnType())) {
-                            keyFieldInfo.setColumnType(fieldComment.columnType());
-                        } else {
-                            keyFieldInfo.setColumnType(typeConvert.convertToDbColumnType(keyField));
+                if (StringUtils.isNotBlank(tableInfo.getKeyProperty())) {
+                    EntityFieldInfo keyFieldInfo = new EntityFieldInfo();
+                    keyFieldInfo.setPrimaryKey(true);
+                    keyFieldInfo.setColumnName(tableInfo.getKeyColumn());
+                    keyFieldInfo.setIdType(tableInfo.getIdType());
+                    keyFieldInfo.setDefaultNotNull(true);
+                    try {
+                        Field keyField = clazz.getDeclaredField(tableInfo.getKeyProperty());
+                        FieldComment fieldComment = keyField.getAnnotation(FieldComment.class);
+                        if (ObjectUtils.isNotEmpty(fieldComment)) {
+                            if (StringUtils.isNotBlank(fieldComment.columnType())) {
+                                keyFieldInfo.setColumnType(fieldComment.columnType());
+                            } else {
+                                keyFieldInfo.setColumnType(typeConvert.convertToDbColumnType(keyField));
+                            }
+                            keyFieldInfo.setComment(fieldComment.value());
                         }
+                    } catch (NoSuchFieldException e) {
+                        e.printStackTrace();
                     }
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
+                    entityFieldInfoList.add(keyFieldInfo);
                 }
-                entityFieldInfoList.add(keyFieldInfo);
 
                 List<TableFieldInfo> fieldInfoList = tableInfo.getFieldList();
                 if (CollectionUtils.isNotEmpty(fieldInfoList)) {

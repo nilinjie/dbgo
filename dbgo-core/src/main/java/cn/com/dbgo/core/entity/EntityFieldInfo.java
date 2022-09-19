@@ -1,5 +1,6 @@
 package cn.com.dbgo.core.entity;
 
+import cn.com.dbgo.core.dialect.IDbTableColumn;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 
@@ -35,6 +36,10 @@ public class EntityFieldInfo {
      * 表字段类型
      */
     private String columnType;
+    /**
+     * 原表字段信息（修改字段使用）
+     */
+    private IDbTableColumn originDbTableColumn;
 
     public EntityFieldInfo() {
     }
@@ -89,5 +94,13 @@ public class EntityFieldInfo {
 
     public void setColumnType(String columnType) {
         this.columnType = columnType;
+    }
+
+    public IDbTableColumn getOriginDbTableColumn() {
+        return originDbTableColumn;
+    }
+
+    public void setOriginDbTableColumn(IDbTableColumn originDbTableColumn) {
+        this.originDbTableColumn = originDbTableColumn;
     }
 }
